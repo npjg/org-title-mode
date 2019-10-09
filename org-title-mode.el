@@ -70,18 +70,28 @@ from property lines, e.g. lines that have #+PROPERTY: value."
 
 ;;; Mode Internals
 
+;;;; Name Setter
+
 (defun org-title--set-buffer-name (&optional buffer-or-name)
   "Get the title of the buffer, and use it to set the buffer's
 name."
   (interactive)
   (let* ((buffer-or-name (or buffer-or-name (current-buffer)))
-         (buffer-name (org-keyword-alist-get "TITLE" buffer-or-name)))
+         (buffer-name (org-title--format-semantic-name buffer-or-name)))
     (with-current-buffer buffer-or-name
       (rename-buffer buffer-name))))
+
+(defun org-title--format-semantic-name (buffer-or-name)
+  (org-keyword-alist-get "TITLE" buffer-or-name))
+
+;;;; Name Unsetter
 
 (defun org-title--unset-buffer-name (&optional buffer-or-name)
   (interactive)
   (let* ((buffer-or-name (or buffer-or-name (current-buffer)))
          (buffer-name (org-keyword-alist-get "TITLE" buffer-or-name)))
-    (with-current-buffer buffer-or-name
-      (rename-buffer (relative-path (buffer-file-name))))))
+    (org-title--format-revert-name buffer-or-name)))
+
+(defun org-title--format-revert-name (buffer-or-name)
+  (with-current-buffer buffer-or-name
+      (rename-buffer (relative-path (buffer-file-name)))))
