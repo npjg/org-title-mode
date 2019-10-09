@@ -1,0 +1,8 @@
+#+TITLE: org-title-mode
+#+AUTHOR: Nathanael Gentry
+
+This package provides semantic naming for Org buffers. `org-title-mode', its
+namesake minor mode, sets the name of an Org buffer to the title of the Org
+document, with appropriate conflict resolution policies in place. When the mode
+is disabled, the name of the buffer is restored to what it was before the mode
+renamed it.

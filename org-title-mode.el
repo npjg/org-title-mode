@@ -6,9 +6,9 @@
 ;; URL: http://github.com/npjg/org-title-mode
 ;; Package-Requires:
 ;; Version: 0.1
-;; Created: 2019-10-07
+;; Created: 2019-10-08
 ;; By: Nathanael Gentry <ngentry1@liberty.edu>
-;; Keywords:
+;; Keywords: org, buffers
 
 ;;; Commentary:
 
@@ -107,3 +107,7 @@ name."
 (defun org-title--format-revert-name (buffer-or-name)
   (with-current-buffer buffer-or-name
     (rename-buffer org-title--original-buffer-name)))
+
+(provide 'org-title-mode)
+
+;;; org-title-mode.el ends here
