@@ -82,7 +82,16 @@ name."
       (rename-buffer buffer-name))))
 
 (defun org-title--format-semantic-name (buffer-or-name)
-  (org-keyword-alist-get "TITLE" buffer-or-name))
+  (org-title--resolve-buffer-name-conflict
+   (org-keyword-alist-get "TITLE" buffer-or-name)))
+
+(defun org-title--resolve-buffer-name-conflict (buffer-name-maybe)
+  (if (not (get-buffer buffer-name-maybe))
+      buffer-name-maybe
+    (org-title--resolve-buffer-name-conflict
+     ;; a silly heuristic: just wrap in angle braces until it's unique
+     ;; perhaps a better one: (generate-new-buffer-name buffer-name-maybe)
+     (concat "<" buffer-name-maybe ">"))))
 
 ;;;; Name Unsetter
 
