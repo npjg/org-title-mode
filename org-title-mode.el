@@ -27,8 +27,11 @@ the title of the Org document."
   (unless (eq (buffer-mode) 'org-mode)
     (user-error "Org-title-mode requires Org mode"))
   (if org-title-mode
-      (org-title--set-buffer-name (current-buffer))
-    (org-title--unset-buffer-name (current-buffer))))
+      (progn
+        (setq-local org-title--original-buffer-name (buffer-name))
+        (org-title--set-buffer-name (current-buffer)))
+    (org-title--unset-buffer-name (current-buffer))
+    (kill-local-variable 'org-title--original-buffer-name)))
 
 ;;; Utility Functions
 
@@ -103,4 +106,4 @@ name."
 
 (defun org-title--format-revert-name (buffer-or-name)
   (with-current-buffer buffer-or-name
-      (rename-buffer (relative-path (buffer-file-name)))))
+    (rename-buffer org-title--original-buffer-name)))
