@@ -81,12 +81,15 @@ name."
   (interactive)
   (let* ((buffer-or-name (or buffer-or-name (current-buffer)))
          (buffer-name (org-title--format-semantic-name buffer-or-name)))
-    (with-current-buffer buffer-or-name
-      (rename-buffer buffer-name))))
+    (when buffer-name
+      (with-current-buffer buffer-or-name
+        (rename-buffer buffer-name)))))
 
 (defun org-title--format-semantic-name (buffer-or-name)
-  (org-title--resolve-buffer-name-conflict
-   (org-keyword-alist-get "TITLE" buffer-or-name)))
+  "Return the semantic buffer name, or nil if there is not enough information to do so."
+  (let ((semantic-name (org-keyword-alist-get "TITLE" buffer-or-name)))
+    (when semantic-name
+      (org-title--resolve-buffer-name-conflict semantic-name))))
 
 (defun org-title--resolve-buffer-name-conflict (buffer-name-maybe)
   (if (not (get-buffer buffer-name-maybe))
