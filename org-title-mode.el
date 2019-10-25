@@ -29,7 +29,13 @@ the title of the Org document."
   (if org-title-mode
       (progn
         (setq-local org-title--original-buffer-name (buffer-name))
+        (add-hook 'org-ctrl-c-ctrl-c-final-hook
+                  #'org-title--set-buffer-name
+                  nil nil)
         (org-title--set-buffer-name (current-buffer)))
+    (remove-hook 'org-ctrl-c-ctrl-c-final-hook
+                 #'org-title--set-buffer-name
+                 nil)
     (org-title--unset-buffer-name (current-buffer))
     (kill-local-variable 'org-title--original-buffer-name)))
 
