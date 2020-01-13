@@ -99,7 +99,8 @@ name."
 (defun org-title--format-semantic-name (buffer-or-name)
   "Return the semantic buffer name, or nil if there is not enough information to do so."
   (let ((semantic-name (org-keyword-alist-get "TITLE" buffer-or-name)))
-    (when (and semantic-name (> (length semantic-name) 0))
+    (when (and semantic-name (> (length semantic-name) 0)
+               (not (equal (buffer-name) semantic-name)))
       (org-title--resolve-buffer-name-conflict semantic-name))))
 
 (defun org-title--resolve-buffer-name-conflict (buffer-name-maybe)
