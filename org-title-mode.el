@@ -65,17 +65,22 @@ If buffer-or-name is nil return current buffer's mode."
   (buffer-local-value 'major-mode
    (if buffer-or-name (get-buffer buffer-or-name) (current-buffer))))
 
-(defun org-keyword-alist (buffer-or-name)
-  "Parse the Org buffer BUFFER-OR-NAME and return a cons list of (property . value)
-from property lines, e.g. lines that have #+PROPERTY: value."
-  (with-current-buffer buffer-or-name
-    (org-element-map (org-element-parse-buffer 'element) 'keyword
-      (lambda (keyword) (cons (org-element-property :key keyword)
-                              (org-element-property :value keyword))))))
+(defun org-keyword-alist-get (keyword &optional buffer-or-name)
+  "Get the value from a #+KEYWORD: value line in
+BUFFER-OR-NAME or the current buffer. Return nil if there is
+none.
 
-(defun org-keyword-alist-get (keyword buffer-or-name)
-  "get the value of a KEYWORD in the form of #+KEYWORD: value"
-  (cdr (assoc keyword (org-keyword-alist buffer-or-name))))
+Adapted from John Kitchin, \"Getting keyword options in org-files.\""
+  (interactive (list (read-string "Keyword: ")))
+  (with-current-buffer (or buffer-or-name (current-buffer))
+    (save-excursion
+      (goto-char (point-min))
+      (let ((case-fold-search t)
+            (re (format "^#\\+%s:[ \t]+\\([^\t\n]+\\)" keyword)))
+        (if (save-excursion
+              (or (re-search-forward re nil t)
+                  (re-search-backward re nil t)))
+            (match-string 1))))))
 
 ;;; Mode Internals
 
