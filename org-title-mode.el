@@ -32,12 +32,23 @@ the title of the Org document."
         (add-hook 'org-ctrl-c-ctrl-c-final-hook
                   #'org-title--set-buffer-name
                   nil nil)
+        (advice-add 'org-refresh-category-properties :override #'org-title-refresh-category-properties)
+        (org-refresh-category-properties)
         (org-title--set-buffer-name (current-buffer)))
     (remove-hook 'org-ctrl-c-ctrl-c-final-hook
                  #'org-title--set-buffer-name
                  nil)
+    (advice-remove 'org-refresh-category-properties #'org-title-refresh-category-properties)
+    (org-refresh-category-properties)
     (org-title--unset-buffer-name (current-buffer))
     (kill-local-variable 'org-title--original-buffer-name)))
+
+(defun org-title-refresh-category-properties ()
+  "Refresh category text properties in the buffe, replacing
+default file-name category with the title category."
+  (let ((org-category (org-keyword-alist-get "TITLE")))
+    (ad-with-originals 'org-refresh-category-properties
+      (org-refresh-category-properties))))
 
 ;;; Utility Functions
 
@@ -80,7 +91,7 @@ Adapted from John Kitchin, \"Getting keyword options in org-files.\""
         (if (save-excursion
               (or (re-search-forward re nil t)
                   (re-search-backward re nil t)))
-            (match-string 1))))))
+            (match-string-no-properties 1))))))
 
 ;;; Mode Internals
 
