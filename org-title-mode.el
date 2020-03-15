@@ -32,13 +32,15 @@ the title of the Org document."
         (add-hook 'org-ctrl-c-ctrl-c-final-hook
                   #'org-title--set-buffer-name
                   nil nil)
-        (advice-add 'org-refresh-category-properties :override #'org-title-refresh-category-properties)
+        (advice-add 'org-refresh-category-properties :override
+                    #'org-title-refresh-category-properties)
         (org-refresh-category-properties)
         (org-title--set-buffer-name (current-buffer)))
     (remove-hook 'org-ctrl-c-ctrl-c-final-hook
                  #'org-title--set-buffer-name
                  nil)
-    (advice-remove 'org-refresh-category-properties #'org-title-refresh-category-properties)
+    (advice-remove 'org-refresh-category-properties
+                   #'org-title-refresh-category-properties)
     (org-refresh-category-properties)
     (org-title--unset-buffer-name (current-buffer))
     (kill-local-variable 'org-title--original-buffer-name)))
@@ -108,7 +110,8 @@ name."
         (rename-buffer buffer-name)))))
 
 (defun org-title--format-semantic-name (buffer-or-name)
-  "Return the semantic buffer name, or nil if there is not enough information to do so."
+  "Return the semantic buffer name, or nil if there is not enough
+information to do so."
   (let ((semantic-name (org-keyword-alist-get "TITLE" buffer-or-name)))
     (when (and semantic-name (> (length semantic-name) 0)
                (not (equal (buffer-name) semantic-name)))
