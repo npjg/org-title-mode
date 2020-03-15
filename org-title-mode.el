@@ -17,6 +17,7 @@
 ;; document, with appropriate conflict resolution policies in place.
 
 (require 'org)
+(require 'org-global-props)
 
 ;;;###autoload
 (define-minor-mode org-title-mode
@@ -48,7 +49,7 @@ the title of the Org document."
 (defun org-title-refresh-category-properties ()
   "Refresh category text properties in the buffe, replacing
 default file-name category with the title category."
-  (let ((org-category (org-keyword-alist-get "TITLE")))
+  (let ((org-category (org-global-prop-get "TITLE")))
     (ad-with-originals 'org-refresh-category-properties
       (org-refresh-category-properties))))
 
@@ -78,23 +79,6 @@ If buffer-or-name is nil return current buffer's mode."
   (buffer-local-value 'major-mode
    (if buffer-or-name (get-buffer buffer-or-name) (current-buffer))))
 
-(defun org-keyword-alist-get (keyword &optional buffer-or-name)
-  "Get the value from a #+KEYWORD: value line in
-BUFFER-OR-NAME or the current buffer. Return nil if there is
-none.
-
-Adapted from John Kitchin, \"Getting keyword options in org-files.\""
-  (interactive (list (read-string "Keyword: ")))
-  (with-current-buffer (or buffer-or-name (current-buffer))
-    (save-excursion
-      (goto-char (point-min))
-      (let ((case-fold-search t)
-            (re (format "^#\\+%s:[ \t]+\\([^\t\n]+\\)" keyword)))
-        (if (save-excursion
-              (or (re-search-forward re nil t)
-                  (re-search-backward re nil t)))
-            (match-string-no-properties 1))))))
-
 ;;; Mode Internals
 
 ;;;; Name Setter
@@ -112,7 +96,7 @@ name."
 (defun org-title--format-semantic-name (buffer-or-name)
   "Return the semantic buffer name, or nil if there is not enough
 information to do so."
-  (let ((semantic-name (org-keyword-alist-get "TITLE" buffer-or-name)))
+  (let ((semantic-name (org-global-prop-get "TITLE" buffer-or-name)))
     (when (and semantic-name (> (length semantic-name) 0)
                (not (equal (buffer-name) semantic-name)))
       (org-title--resolve-buffer-name-conflict semantic-name))))
@@ -130,7 +114,7 @@ information to do so."
 (defun org-title--unset-buffer-name (&optional buffer-or-name)
   (interactive)
   (let* ((buffer-or-name (or buffer-or-name (current-buffer)))
-         (buffer-name (org-keyword-alist-get "TITLE" buffer-or-name)))
+         (buffer-name (org-global-prop-get "TITLE" buffer-or-name)))
     (org-title--format-revert-name buffer-or-name)))
 
 (defun org-title--format-revert-name (buffer-or-name)
